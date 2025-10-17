@@ -1,33 +1,44 @@
 package com.example.demo;
 
-public class MyWallet {
-    private Long user_id;    
-
-
-// construtor vazio
-    public MyWallet() {
+public class EventWallet {
+    private Long user_id;
+    private Long event_id;    
+    
+    // construtor vazio
+    public EventWallet() {
         this.user_id = null;
-    }
+        this.event_id = null;
+    }  
 
-//construtor completo
-    public MyWallet(Long user_id) {
+    //construtor completo
+    public EventWallet(Long user_id, Long event_id) {
         this.user_id = user_id;
+        this.event_id = event_id;
     }
 
-// getters
+    // getters
     public Long getUserId() {
         return user_id;
     }
 
-//setters
+    public Long getEventId() {
+        return event_id;
+    }
+
+    //setters
     public void setUserId(Long user_id) {
         this.user_id = user_id;
     }
 
+    public void setEventId(Long event_id) {
+        this.event_id = event_id;
+    }
+
     @Override
     public String toString() {
-        return "MyWallet{" +
+        return "EventWallet{" +
                 "user_id=" + user_id +
+                ", event_id=" + event_id +
                 '}';
     }
 }
