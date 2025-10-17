@@ -1,11 +1,8 @@
-package com.gerenciador.eventos;
+package com.example.demo;
 
-
-// teste 5 rezando
 import java.time.LocalDateTime;
 
 public class User {
-
     // Atributos básicos (POJO simples)
     private Long id;              // fazer ser preenchido automaticamente
     private String name;
