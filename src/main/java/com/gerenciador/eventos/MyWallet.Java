@@ -1,25 +1,24 @@
-package com.gerenciador.eventos;
+package com.example.demo;
 
 public class MyWallet {
     private Long user_id;    
 
-
-// construtor vazio
+    // construtor vazio
     public MyWallet() {
         this.user_id = null;
     }
 
-//construtor completo
+    //construtor completo
     public MyWallet(Long user_id) {
         this.user_id = user_id;
     }
 
-// getters
+    // getters
     public Long getUserId() {
         return user_id;
     }
 
-//setters
+    //setters
     public void setUserId(Long user_id) {
         this.user_id = user_id;
     }
@@ -31,4 +30,3 @@ public class MyWallet {
                 '}';
     }
 }
-    
