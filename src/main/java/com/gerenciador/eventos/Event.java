@@ -1,6 +1,5 @@
 package com.example.demo;
 
-//imports
 import java.util.ArrayList;
 import java.util.List;
 import java.time.LocalDateTime;
@@ -8,7 +7,7 @@ import java.time.LocalDateTime;
 public class Event {
     // Atributos básicos (POJO simples)
     private Long event_id;              // fazer ser preenchido automaticamente
-    private Long creator_id;              // fazer ser preenchido automaticamente
+    private Long creator_id;            // fazer ser preenchido automaticamente
     private String event_name;
     private Boolean is_EAD;
     private String address;
@@ -16,11 +15,9 @@ public class Event {
     private LocalDateTime buy_time_limit;
     private int lot_quantity;
     private int quantity;
-  //private double price;
     private String description;
-    private List<String> presenters;  //apresentadores
+    private List<String> presenters;    //apresentadores
     private LocalDateTime createdAt;
-
 
     //constructor vazio
     public Event() { 
@@ -32,9 +29,7 @@ public class Event {
         this.event_date = null;
         this.buy_time_limit = null;
         this.lot_quantity = 0;
-        this.lot_quantity = 0;
         this.quantity = 0;
-        //this.price = 0.0;
         this.description = "";
         this.presenters = new ArrayList<>();
         this.createdAt = null;
@@ -51,7 +46,6 @@ public class Event {
         this.buy_time_limit = buy_time_limit;
         this.lot_quantity = lot_quantity;
         this.quantity = quantity;
-       // this.price = price;
         this.description = description;
         this.presenters = presenters;
         this.createdAt = LocalDateTime.now();
@@ -143,10 +137,6 @@ public class Event {
     public void setCreatedAt(LocalDateTime createdAt) { 
         this.createdAt = createdAt; 
     }
-    //public void setPrice(double price) { 
-      //  this.price = price;
-    //}
-    // Outros métodos, se necessário
 
     @Override
     public String toString() {
