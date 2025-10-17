@@ -1,4 +1,4 @@
-package com.gerenciador.eventos;
+package com.example.demo;
 
 //imports
 import java.util.ArrayList;
