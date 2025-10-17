@@ -1,41 +1,33 @@
-package com.gerenciador.eventos;
+package com.example.demo;
 
-public class EventWallet {
-    private Long user_id;
-    private Long event_id;    
-    
+public class MyWallet {
+    private Long user_id;    
+
+
 // construtor vazio
-    public EventWallet() {
+    public MyWallet() {
         this.user_id = null;
-        this.event_id = null;
-    }  
-//construtor completo
-    public EventWallet(Long user_id, Long event_id) {
-        this.user_id = user_id;
-        this.event_id = event_id;
     }
+
+//construtor completo
+    public MyWallet(Long user_id) {
+        this.user_id = user_id;
+    }
+
 // getters
     public Long getUserId() {
         return user_id;
     }
 
-    public Long getEventId() {
-        return event_id;
-    }
 //setters
     public void setUserId(Long user_id) {
         this.user_id = user_id;
     }
 
-    public void setEventId(Long event_id) {
-        this.event_id = event_id;
-    }
     @Override
     public String toString() {
-        return "EventWallet{" +
+        return "MyWallet{" +
                 "user_id=" + user_id +
-                ", event_id=" + event_id +
                 '}';
     }
-    
 }
