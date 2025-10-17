@@ -1,4 +1,4 @@
-package com.gerenciador.eventos;
+package com.example.demo;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
@@ -10,6 +10,3 @@ public class Main {
         SpringApplication.run(Main.class, args);
     }
 }
-
-
-//mvn clean compile test
