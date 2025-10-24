@@ -1,0 +1,33 @@
+# Ignore Maven build output
+target/
+
+# Maven wrapper and local maven metadata
+.mvn/
+!.mvn/wrapper/maven-wrapper.jar
+
+# IDEs and editor metadata
+.idea/
+.vscode/
+*.iml
+
+# OS files
+.DS_Store
+
+# Compiled classes and jars
+*.class
+*.jar
+
+# Logs, temp and build folders
+*.log
+*.tmp
+tmp/
+out/
+build/
+
+# Git
+.git
+
+# Other
+.settings/
+
+# Keep the Dockerfile in context
