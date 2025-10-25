@@ -1,4 +1,4 @@
-package com.example.demo;
+package com.gerenciador.eventos;
 
 public class MyWallet {
     private Long user_id;    

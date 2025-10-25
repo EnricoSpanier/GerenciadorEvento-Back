@@ -17,6 +17,9 @@ target/
 *.class
 *.jar
 
+# Allow including the built jar in target/ when copying into the image
+!target/*.jar
+
 # Logs, temp and build folders
 *.log
 *.tmp
