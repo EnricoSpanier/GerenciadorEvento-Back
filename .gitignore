@@ -1,0 +1,66 @@
+# ===== Java / Maven =====
+target/
+*.class
+*.jar
+*.war
+*.ear
+
+# Maven build and plugin artifacts
+pom.xml.tag
+pom.xml.releaseBackup
+pom.xml.versionsBackup
+pom.xml.next
+release.properties
+dependency-reduced-pom.xml
+buildNumber.properties
+.mvn/timing.properties
+
+# Test reports & coverage (often under target, but keep explicit)
+surefire-reports/
+failsafe-reports/
+jacoco.exec
+
+# JVM crash logs
+hs_err_pid*
+replay_pid*
+
+# ===== IDEs =====
+# IntelliJ
+.idea/
+*.iml
+*.ipr
+*.iws
+out/
+
+# Eclipse
+.project
+.classpath
+.settings/
+
+# VS Code
+.vscode/
+
+# ===== OS / Editor =====
+.DS_Store
+Thumbs.db
+*~
+*.swp
+*.swo
+
+# ===== Environment / Secrets =====
+.env
+.env.*
+
+# ===== Misc =====
+.apt_generated/
+.classpath
+.factorypath
+.project
+.settings/
+.sts4-cache/
+.metadata/
+.cache/
+.classpath
+.project
+bin/
+generated/
