@@ -50,6 +50,8 @@ Thumbs.db
 # ===== Environment / Secrets =====
 .env
 .env.*
+docker-compose
+.override.yml
 
 # ===== Misc =====
 .apt_generated/
