@@ -16,6 +16,7 @@ CREATE TABLE IF NOT EXISTS public.event
     quant integer NOT NULL,
     description text COLLATE pg_catalog."default" NOT NULL,
     created_at timestamp without time zone DEFAULT CURRENT_TIMESTAMP,
+    updated_at timestamp without time zone NOT NULL DEFAULT CURRENT_TIMESTAMP,
     CONSTRAINT "Event_pkey" PRIMARY KEY (event_id),
     CONSTRAINT "Event_event_name_key" UNIQUE (event_name),
     CONSTRAINT "Event_creator_id_fkey" FOREIGN KEY (creator_id)

@@ -1,28 +1,44 @@
-/*package com.gerenciador.eventos;
-
+package com.gerenciador.eventos;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 import org.junit.jupiter.api.Test;
-import static org.junit.jupiter.api.Assertions.*;
+import org.junit.jupiter.api.TestInstance;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.context.annotation.Import;
 
-import org.junit.jupiter.api.BeforeEach;
+import com.gerenciador.eventos.Object.MyWallet;
+import com.gerenciador.eventos.Object.User;
+import com.gerenciador.eventos.Service.MyWalletService;
+import com.gerenciador.eventos.Service.UserService;
+import com.gerenciador.eventos.TestSupport.GlobalDbTruncator;
 
+@SpringBootTest
+@TestInstance(TestInstance.Lifecycle.PER_CLASS)
+@Import(GlobalDbTruncator.class)
 public class MyWalletTest {
-    
-    public MyWalletTest() {
-    }
 
-    @BeforeEach
-    public void setUp() {
-    }
-    
-    MyWallet objMyWallet = new MyWallet();
+    @Autowired
+    private UserService userService;
 
-    //testando os Getters
+    @Autowired
+    private MyWalletService myWalletService;
+
+    // Limpeza suite-level via GlobalDbTruncator
 
     @Test
-    public void testGetUserId() {
-        objMyWallet.setUserId(1L);
-        assertEquals(1L, objMyWallet.getUserId());
-    }
+    public void testWalletExistsAfterUserCreation() {
+        User u = new User();
+        u.setName("Wallet User");
+        u.setEmail("wallet@example.com");
+        u = userService.createUser(u);
+        assertNotNull(u.getId());
 
+        // trigger deve criar; ensureExists garante idempotência
+        myWalletService.ensureExists(u.getId());
+
+        MyWallet w = myWalletService.getByUserId(u.getId());
+        assertNotNull(w);
+        assertEquals(u.getId(), w.getUserId());
+    }
 }
-*/

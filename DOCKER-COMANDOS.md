@@ -1,88 +1,307 @@
-# Comandos Docker Compose e Testes
+# 🐳 Guia Docker - Gerenciador de Eventos
 
-Este guia contém os comandos essenciais para (re)construir as imagens, subir os serviços, validar a criação do banco e rodar os testes da aplicação, tudo via Docker.
+Este guia contém todos os comandos necessários para trabalhar com o projeto usando Docker.
 
-## 1) Build/Rebuild das imagens
+---
 
-```bash
-# Reconstroi as imagens do backend e do banco (sem cache)
-docker compose build --no-cache
-```
-
-## 2) Subir os serviços
+## � Início Rápido (3 passos)
 
 ```bash
-# Sobe db (Postgres) e backend
+# 1. Subir os containers
 docker compose up -d
-```
 
-## 3) (Opcional) Recriar containers e volume do Postgres
-Use quando quiser forçar a reexecução dos scripts de inicialização do banco (db/init-scripts/*).
+# 2. Rodar os testes
+./run-tests.sh
 
-```bash
-# Para tudo e remove containers, rede e volume persistente
-# ATENÇÃO: Isso apaga os dados do Postgres (volume)
-docker compose down -v
-
-# Reconstroi e sobe novamente
-docker compose build --no-cache
-docker compose up -d
-```
-
-## 4) Testar a criação do banco (scripts de init)
-
-- Verificar o schema da tabela `users`:
-```bash
-docker compose exec db psql -U admin -d meu_banco -c "\\d+ users"
-```
-
-- Rodar o script de testes do banco `99-tests.sql` (ele limpa e valida chaves/relacionamentos):
-```bash
-docker compose exec db psql -U admin -d meu_banco -f /docker-entrypoint-initdb.d/99-tests.sql
-```
-
-Saída esperada (sucesso): `NOTICE:  Testes mínimos concluídos com sucesso`.
-
-## 5) Rodar testes da aplicação (JUnit) dentro de container Maven
-
-- Rodar todos os testes:
-```bash
-docker run --rm \
-  --network gerenciador-net \
-  --env-file .env \
-  -v "$PWD":/workspace \
-  -w /workspace \
-  maven:3.9.7-eclipse-temurin-21-jammy \
-  mvn -q test
-```
-
-- Rodar somente a classe `UserTest`:
-```bash
-docker run --rm \
-  --network gerenciador-net \
-  --env-file .env \
-  -v "$PWD":/workspace \
-  -w /workspace \
-  maven:3.9.7-eclipse-temurin-21-jammy \
-  mvn -q -Dtest=com.gerenciador.eventos.UserTest test
-```
-
-Observações:
-- O `--network gerenciador-net` garante que os testes se conectem ao Postgres do `docker-compose` via host `db:5432`.
-- O `--env-file .env` repassa as credenciais de banco e a `SPRING_DATASOURCE_URL` para o processo de testes.
-
-## 6) Parar e remover serviços (sem apagar dados)
-
-```bash
+# 3. Parar os containers
 docker compose down
 ```
 
-## 7) Logs úteis (opcional)
+---
+
+## � Comandos Principais
+
+### Subir o Ambiente
 
 ```bash
-# Logs do banco
+# Subir banco de dados e backend
+docker compose up -d
+
+# Verificar status dos serviços
+docker compose ps
+```
+
+**Serviços disponíveis:**
+- `db` - PostgreSQL 16 (porta 5433)
+- `backend` - API Spring Boot (porta 8081)
+
+### Parar o Ambiente
+
+```bash
+# Parar sem remover dados
+docker compose down
+
+# Parar e remover TUDO (incluindo dados do banco)
+docker compose down -v
+```
+
+### Reconstruir Imagens
+
+```bash
+# Rebuild completo (use após mudanças no código)
+docker compose build --no-cache
+
+# Rebuild e subir
+docker compose up -d --build
+```
+
+---
+
+## 🧪 Testes
+
+### Executar Testes (Recomendado)
+
+```bash
+./run-tests.sh
+```
+
+**O que este script faz:**
+- ✅ Executa todos os testes dentro do Docker
+- ✅ Não baixa dependências na sua máquina
+- ✅ Exibe resultados formatados com estatísticas
+- ✅ Mostra tempo de execução
+
+**Saída esperada:**
+```
+==================================================
+   🧪 EXECUTANDO TESTES NO DOCKER
+==================================================
+
+  ✅ EventTest: 1 testes (0.241s)
+  ✅ UserTest: 15 testes (1.153s)
+  ...
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+📊 TOTAL:
+   • Testes: 23
+   • ✅ Sucesso: 23
+   • ⏱️  Tempo: 7.953s
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+✅ RESULTADO: TODOS OS TESTES PASSARAM!
+==================================================
+```
+
+### Executar Testes Manualmente
+
+```bash
+# Todos os testes
+docker run --rm --network gerenciador-net --env-file .env \
+  -v "$PWD":/workspace -w /workspace \
+  maven:3.9.7-eclipse-temurin-21-jammy mvn -q test
+
+# Apenas uma classe específica
+docker run --rm --network gerenciador-net --env-file .env \
+  -v "$PWD":/workspace -w /workspace \
+  maven:3.9.7-eclipse-temurin-21-jammy \
+  mvn -q -Dtest=UserTest test
+```
+
+---
+
+## 🗄️ Validação do Banco de Dados
+
+### Verificar Estrutura das Tabelas
+
+```bash
+# Ver estrutura da tabela users
+docker compose exec db psql -U admin -d meu_banco -c "\d+ users"
+
+# Ver todas as tabelas
+docker compose exec db psql -U admin -d meu_banco -c "\dt"
+
+# Acessar console do PostgreSQL
+docker compose exec db psql -U admin -d meu_banco
+```
+
+### Executar Testes do Banco
+
+```bash
+# Rodar suite de testes SQL
+docker compose exec db psql -U admin -d meu_banco \
+  -f /docker-entrypoint-initdb.d/99-tests.sql
+```
+
+**Saída esperada:** `NOTICE: Testes mínimos concluídos com sucesso`
+
+### Consultas Úteis
+
+```bash
+# Contar registros em uma tabela
+docker compose exec db psql -U admin -d meu_banco \
+  -c "SELECT COUNT(*) FROM users;"
+
+# Ver todos os usuários
+docker compose exec db psql -U admin -d meu_banco \
+  -c "SELECT user_id, user_name, email FROM users;"
+
+# Limpar todas as tabelas (CUIDADO!)
+docker compose exec db psql -U admin -d meu_banco \
+  -c "TRUNCATE users, event, mywallet, walletevent RESTART IDENTITY CASCADE;"
+```
+
+---
+
+## 📊 Logs e Monitoramento
+
+```bash
+# Ver logs em tempo real
+docker compose logs -f
+
+# Logs apenas do banco
 docker compose logs -f db
 
-# Logs do backend
+# Logs apenas do backend
 docker compose logs -f backend
+
+# Ver últimas 50 linhas
+docker compose logs --tail=50 db
+```
+
+---
+
+## 🔧 Solução de Problemas
+
+### ❌ Erro: Testes não conectam ao banco
+
+**Problema:** `Connection refused` ou timeout
+
+**Solução:**
+```bash
+# 1. Verificar se o banco está rodando
+docker compose ps
+
+# 2. Se não estiver, subir novamente
+docker compose up -d
+
+# 3. Aguardar inicialização (10-15 segundos)
+sleep 15
+
+# 4. Rodar testes
+./run-tests.sh
+```
+
+### ❌ Erro: Tabelas não existem
+
+**Problema:** `ERROR: relation "users" does not exist`
+
+**Causa:** Scripts de inicialização não foram executados
+
+**Solução:**
+```bash
+# Recriar banco completamente
+docker compose down -v
+docker compose up -d
+sleep 15
+./run-tests.sh
+```
+
+### ❌ Erro: Porta já está em uso
+
+**Problema:** `port is already allocated`
+
+**Solução:**
+```bash
+# Encontrar processo usando a porta
+sudo lsof -i :5433  # ou :8081
+
+# Parar containers conflitantes
+docker compose down
+
+# Ou mudar porta no docker-compose.yml
+```
+
+### 🔄 Resetar Ambiente Completamente
+
+```bash
+# Remover tudo e reconstruir
+docker compose down -v
+docker compose build --no-cache
+docker compose up -d
+sleep 15
+./run-tests.sh
+```
+
+---
+
+## 🎯 Workflows Comuns
+
+### Desenvolvimento Diário
+
+```bash
+# Manhã: Subir ambiente
+docker compose up -d
+
+# Durante o dia: Testar mudanças
+./run-tests.sh
+
+# Noite: Parar ambiente
+docker compose down
+```
+
+### Após Mudanças no Código
+
+```bash
+# Rebuild e testar
+docker compose build
+docker compose up -d
+./run-tests.sh
+```
+
+### Após Mudanças no Banco
+
+```bash
+# Recriar banco e testar
+docker compose down -v
+docker compose up -d
+sleep 15
+./run-tests.sh
+```
+
+### Antes de um Commit
+
+```bash
+# Garantir que tudo funciona
+docker compose down -v
+docker compose build --no-cache
+docker compose up -d
+sleep 15
+./run-tests.sh
+```
+
+---
+
+## 📝 Notas Importantes
+
+- **Volume Persistente:** O banco mantém dados entre reinicializações. Use `-v` para limpar.
+- **Scripts de Init:** Executam apenas na primeira criação do volume.
+- **Network:** `gerenciador-net` conecta todos os containers.
+- **Variáveis de Ambiente:** Definidas no arquivo `.env` na raiz do projeto.
+
+---
+
+## 🆘 Ajuda Adicional
+
+Se os problemas persistirem:
+
+1. Verifique os logs: `docker compose logs`
+2. Verifique o arquivo `.env` existe e está correto
+3. Verifique se as portas 5433 e 8081 estão livres
+4. Tente um reset completo (seção "Resetar Ambiente")
+
+**Estrutura esperada do .env:**
+```env
+SPRING_DATASOURCE_URL=jdbc:postgresql://db:5432/meu_banco
+SPRING_DATASOURCE_USERNAME=admin
+SPRING_DATASOURCE_PASSWORD=senha123
 ```

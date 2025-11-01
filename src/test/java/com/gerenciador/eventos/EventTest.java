@@ -1,102 +1,61 @@
 package com.gerenciador.eventos;
-
-import org.junit.jupiter.api.Test;
-import static org.junit.jupiter.api.Assertions.*;
-
-import org.junit.jupiter.api.BeforeEach;
-
 import java.time.LocalDateTime;
-import java.util.ArrayList;
-import java.util.List;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertNull;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.TestInstance;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.context.annotation.Import;
+
+import com.gerenciador.eventos.Object.Event;
+import com.gerenciador.eventos.Object.User;
+import com.gerenciador.eventos.Service.EventService;
+import com.gerenciador.eventos.Service.UserService;
+import com.gerenciador.eventos.TestSupport.GlobalDbTruncator;
+
+@SpringBootTest
+@TestInstance(TestInstance.Lifecycle.PER_CLASS)
+@Import(GlobalDbTruncator.class)
 public class EventTest {
-    
-    public EventTest() {
-    }
 
-    @BeforeEach
-    public void setUp() {
-    }
-    
-    Event objEvent = new Event();
+    @Autowired
+    private UserService userService;
 
-    //testando os Getters
+    @Autowired
+    private EventService eventService;
+
+    // Limpeza suite-level via GlobalDbTruncator
 
     @Test
-    public void testGetEvent_id() {
-        objEvent.setEvent_id(1L);
-        assertEquals(1L, objEvent.getEvent_id());
-    }
+    public void testCreateEventWithDefaults() {
+        // 1) Criar usuário criador
+        User creator = new User();
+        creator.setName("Creator");
+        creator.setEmail("creator@example.com");
+        creator = userService.createUser(creator);
+        assertNotNull(creator.getId());
 
-    @Test
-    public void testGetCreator_id() {
-        objEvent.setCreator_id(1L);
-        assertEquals(1L, objEvent.getCreator_id());
-    }
+        // 2) Criar evento com buy_time_limit nulo -> deve assumir event_date
+        Event e = new Event();
+        e.setCreator_id(creator.getId());
+        e.setEvent_name("Evento X");
+        e.setIs_EAD(true); // EAD, logo address opcional
+        LocalDateTime eventDate = LocalDateTime.now().plusDays(30);
+        e.setEvent_date(eventDate);
+        e.setBuy_time_limit(null); // default aplicado no service
+        e.setLot_quantity(null); // capacidade indefinida
+        e.setQuantity(100);
+        e.setDescription("desc");
 
-    @Test
-    public void testGetEvent_name() {
-        objEvent.setEvent_name("Event Name");
-        assertEquals("Event Name", objEvent.getEvent_name());
+        Event saved = eventService.createEvent(e);
+        assertNotNull(saved.getEvent_id());
+        assertEquals(eventDate, saved.getEvent_date());
+        assertEquals(eventDate, saved.getBuy_time_limit(), "buy_time_limit deve assumir event_date quando nulo");
+        assertNull(saved.getLot_quantity());
+        assertNotNull(saved.getCreatedAt());
+        assertNotNull(saved.getUpdatedAt());
     }
-
-    @Test
-    public void testGetIs_EAD() {
-        objEvent.setIs_EAD(true);
-        assertTrue(objEvent.getIs_EAD());
-    }
-
-    @Test
-    public void testGetAddress() {
-        objEvent.setAddress("Address");
-        assertEquals("Address", objEvent.getAddress());
-    }
-
-    @Test
-    public void testGetEvent_date() {
-        LocalDateTime date = LocalDateTime.now();
-        objEvent.setEvent_date(date);
-        assertEquals(date, objEvent.getEvent_date());
-    }
-
-    @Test
-    public void testGetBuy_time_limit() {
-        LocalDateTime limit = LocalDateTime.now();
-        objEvent.setBuy_time_limit(limit);
-        assertEquals(limit, objEvent.getBuy_time_limit());
-    }
-
-    @Test
-    public void testGetLot_quantity() {
-        objEvent.setLot_quantity(10);
-        assertEquals(10, objEvent.getLot_quantity().intValue());
-    }
-
-    @Test
-    public void testGetQuantity() {
-        objEvent.setQuantity(100);
-        assertEquals(100, objEvent.getQuantity().intValue());
-    }
-
-    @Test
-    public void testGetDescription() {
-        objEvent.setDescription("Description");
-        assertEquals("Description", objEvent.getDescription());
-    }
-
-    @Test
-    public void testGetPresenters() {
-        List<String> presenters = new ArrayList<>();
-        presenters.add("Presenter1");
-        objEvent.setPresenters(presenters);
-        assertEquals(presenters, objEvent.getPresenters());
-    }
-
-    @Test
-    public void testGetCreatedAt() {
-        LocalDateTime created = LocalDateTime.now();
-        objEvent.setCreatedAt(created);
-        assertEquals(created, objEvent.getCreatedAt());
-    }
-
 }

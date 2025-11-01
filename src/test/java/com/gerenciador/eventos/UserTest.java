@@ -4,7 +4,6 @@ import java.sql.Connection;
 import java.sql.SQLException;
 import java.sql.Statement;
 
-import org.junit.jupiter.api.AfterAll;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
@@ -15,12 +14,15 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.TestInstance;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.context.annotation.Import;
 
 import com.gerenciador.eventos.Object.User;
 import com.gerenciador.eventos.Service.UserService;
+import com.gerenciador.eventos.TestSupport.GlobalDbTruncator;
 
 @SpringBootTest
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
+@Import(GlobalDbTruncator.class)
 public class UserTest {
     
     @Autowired
@@ -29,23 +31,20 @@ public class UserTest {
     @Autowired
     private UserService userService;
     
-    @BeforeEach
-    public void setUp() throws SQLException {
-        // Limpa todas as tabelas antes de cada teste
-        String truncateSQL = "TRUNCATE TABLE public.event, public.walletevent, public.mywallet, public.users RESTART IDENTITY CASCADE";
-        try (Connection conn = databaseConnection.getConnection();
-             Statement stmt = conn.createStatement()) {
-            stmt.execute(truncateSQL);
-        }
-    }
+    // Limpeza suite-level via GlobalDbTruncator
 
-    @AfterAll
-    public void tearDown() throws SQLException {
-        // Limpeza final após todos os testes
-        String truncateSQL = "TRUNCATE TABLE public.event, public.walletevent, public.mywallet, public.users RESTART IDENTITY CASCADE";
+    // Limpeza final suite-level via GlobalDbTruncator
+
+    @BeforeEach
+    public void isolateUserTable() throws SQLException {
+        // Para evitar dependência entre métodos desta classe, limpamos as tabelas dependentes primeiro
         try (Connection conn = databaseConnection.getConnection();
              Statement stmt = conn.createStatement()) {
-            stmt.execute(truncateSQL);
+            // Ordem: primeiro as tabelas que referenciam event, depois event, depois users
+            stmt.execute("DELETE FROM public.walletevent");
+            stmt.execute("DELETE FROM public.event");
+            stmt.execute("DELETE FROM public.mywallet");
+            stmt.execute("DELETE FROM public.users");
         }
     }
 
@@ -228,7 +227,7 @@ public class UserTest {
         // Verifica se foi salvo no banco (query simples)
         try (Connection conn = databaseConnection.getConnection();
              Statement stmt = conn.createStatement();
-             var rs = stmt.executeQuery("SELECT COUNT(*) FROM users")) {
+             java.sql.ResultSet rs = stmt.executeQuery("SELECT COUNT(*) FROM users")) {
             rs.next();
             assertEquals(1, rs.getInt(1));  // Deve haver 1 usuário
         } catch (SQLException e) {
