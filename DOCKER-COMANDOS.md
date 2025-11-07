@@ -107,6 +107,24 @@ docker run --rm --network gerenciador-net --env-file .env \
   mvn -q -Dtest=UserTest test
 ```
 
+  ### Exportar resultado dos testes (arquivo texto)
+
+  ```bash
+  # Executa os testes no Docker e gera um arquivo formatado (tests-report-<timestamp>.txt)
+  ./export-tests.sh
+
+  # Apenas exporta os últimos resultados já existentes em target/surefire-reports
+  ./export-tests.sh --no-run
+
+  # Definir um nome específico para o arquivo
+  ./export-tests.sh --output testes-hoje.txt
+  ```
+
+  O relatório contém:
+  - Listagem por classe com tempo e status
+  - Resumo total (testes, sucesso, tempo total)
+  - Caminho para relatórios completos do Surefire
+
 ---
 
 ## 🗄️ Validação do Banco de Dados
@@ -137,11 +155,17 @@ docker compose exec db psql -U admin -d meu_banco \
 ### Popular Banco com Dados de Exemplo
 
 ```bash
-# Inserir dados de exemplo (usuários, eventos, inscrições)
+# Opção 1 (Recomendado): Popular e já exportar para arquivo formatado
+./export-data.sh --populate
+
+# Opção 2: Apenas popular (sem exportar)
 docker compose exec -T db psql -U admin -d meu_banco < db/seed-data.sql
+
+# (Opcional) Exportar depois
+./export-data.sh
 ```
 
-**Este script:**
+**O seed (db/seed-data.sql) faz:**
 - ✅ Insere 5 usuários
 - ✅ Insere 5 eventos (presenciais e EAD)
 - ✅ Cria carteiras automaticamente (via trigger)
