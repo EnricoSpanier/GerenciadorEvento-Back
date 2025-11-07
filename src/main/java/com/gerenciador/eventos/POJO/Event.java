@@ -1,4 +1,4 @@
-package com.gerenciador.eventos.Object;
+package com.gerenciador.eventos.POJO;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;

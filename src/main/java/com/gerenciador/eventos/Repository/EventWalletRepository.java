@@ -12,7 +12,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
 import com.gerenciador.eventos.DatabaseConnection;
-import com.gerenciador.eventos.Object.EventWallet;
+import com.gerenciador.eventos.POJO.EventWallet;
 
 /**
  * Repository JDBC para a tabela de junção walletevent (user_id, event_id).

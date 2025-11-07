@@ -5,9 +5,9 @@ import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import com.gerenciador.eventos.Object.Event;
-import com.gerenciador.eventos.Object.EventWallet;
-import com.gerenciador.eventos.Object.MyWallet;
+import com.gerenciador.eventos.POJO.Event;
+import com.gerenciador.eventos.POJO.EventWallet;
+import com.gerenciador.eventos.POJO.MyWallet;
 import com.gerenciador.eventos.Repository.EventRepository;
 import com.gerenciador.eventos.Repository.EventWalletRepository;
 import com.gerenciador.eventos.Repository.MyWalletRepository;

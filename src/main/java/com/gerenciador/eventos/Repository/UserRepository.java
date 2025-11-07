@@ -15,7 +15,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
 import com.gerenciador.eventos.DatabaseConnection;
-import com.gerenciador.eventos.Object.User;
+import com.gerenciador.eventos.POJO.User;
 
 /**
  * Repository - responsável pelo acesso ao banco de dados

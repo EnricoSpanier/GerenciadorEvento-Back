@@ -3,7 +3,7 @@ package com.gerenciador.eventos.Service;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import com.gerenciador.eventos.Object.User;
+import com.gerenciador.eventos.POJO.User;
 import com.gerenciador.eventos.Repository.UserRepository;
 
 /**

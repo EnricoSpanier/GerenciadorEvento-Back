@@ -134,6 +134,35 @@ docker compose exec db psql -U admin -d meu_banco \
 
 **Saída esperada:** `NOTICE: Testes mínimos concluídos com sucesso`
 
+### Popular Banco com Dados de Exemplo
+
+```bash
+# Inserir dados de exemplo (usuários, eventos, inscrições)
+docker compose exec -T db psql -U admin -d meu_banco < db/seed-data.sql
+```
+
+**Este script:**
+- ✅ Insere 5 usuários
+- ✅ Insere 5 eventos (presenciais e EAD)
+- ✅ Cria carteiras automaticamente (via trigger)
+- ✅ Insere 6 inscrições em eventos
+- ✅ NÃO remove dados existentes (usa `ON CONFLICT DO NOTHING`)
+- ✅ Exibe resumo com total de registros
+
+**Usuários criados:**
+- João Silva (criador de eventos)
+- Maria Santos
+- Pedro Oliveira
+- Ana Costa
+- Carlos Souza (admin)
+
+**Eventos criados:**
+- Workshop de Java (presencial, 100 vagas)
+- Conferência de DevOps (presencial, 200 vagas)
+- Hackathon 2025 (presencial, 50 vagas)
+- Meetup de Spring Boot (EAD, 500 vagas)
+- Curso de Docker (presencial, 30 vagas)
+
 ### Consultas Úteis
 
 ```bash
