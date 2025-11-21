@@ -2,23 +2,50 @@ name: Java CI
 
 on:
   push:
-    branches: [ main ]
   pull_request:
-    branches: [ main ]
+  workflow_dispatch:
 
 jobs:
   test:
     runs-on: ubuntu-latest
 
+    services:
+      postgres:
+        image: postgres:16
+        env:
+          POSTGRES_USER: postgres
+          POSTGRES_PASSWORD: postgres
+          POSTGRES_DB: eventos
+        ports:
+          - 5433:5432   # <-- PostgreSQL container 5432 → Host 5433 (o que seus testes usam)
+        options: >-
+          --health-cmd="pg_isready -U postgres"
+          --health-interval=5s
+          --health-timeout=5s
+          --health-retries=3
+
     steps:
-      - name: Checkout do código
+      - name: Checkout code
         uses: actions/checkout@v4
 
-      - name: Set up JDK 21
+      - name: Setup JDK 21
         uses: actions/setup-java@v4
         with:
           distribution: temurin
           java-version: 21
 
-      - name: Build & test (Maven)
+      - name: Wait for PostgreSQL
+        run: |
+          until pg_isready -h localhost -p 5433; do
+            echo "Waiting for Postgres..."
+            sleep 2
+          done
+
+      - name: Build & Test
+        env:
+          DB_HOST: localhost
+          DB_PORT: 5433
+          DB_NAME: eventos
+          DB_USER: postgres
+          DB_PASS: postgres
         run: mvn -B clean test
