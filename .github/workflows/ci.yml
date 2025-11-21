@@ -41,9 +41,13 @@ jobs:
             sleep 2
           done
 
-      - name: Initialize Database (run init.sql)
+      - name: Initialize Database (run all SQL scripts)
         run: |
-          PGPASSWORD=senha123 psql -h localhost -p 5433 -U admin -d meu_banco -f ./db/init-scripts/init.sql
+          PGPASSWORD=senha123 psql -h localhost -p 5433 -U admin -d meu_banco -f db/init-scripts/01-functions.sql
+          PGPASSWORD=senha123 psql -h localhost -p 5433 -U admin -d meu_banco -f db/init-scripts/02-users.sql
+          PGPASSWORD=senha123 psql -h localhost -p 5433 -U admin -d meu_banco -f db/init-scripts/03-event.sql
+          PGPASSWORD=senha123 psql -h localhost -p 5433 -U admin -d meu_banco -f db/init-scripts/04-mywallet.sql
+          PGPASSWORD=senha123 psql -h localhost -p 5433 -U admin -d meu_banco -f db/init-scripts/05-walletevent.sql
 
       - name: Build & Run Tests
         env:
