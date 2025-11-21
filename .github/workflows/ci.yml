@@ -43,7 +43,7 @@ jobs:
 
       - name: Initialize Database (run init.sql)
         run: |
-          PGPASSWORD=senha123 psql -h localhost -p 5433 -U admin -d meu_banco -f ./db/init.sql
+          PGPASSWORD=senha123 psql -h localhost -p 5433 -U admin -d meu_banco -f ./db/init-scripts/init.sql
 
       - name: Build & Run Tests
         env:
