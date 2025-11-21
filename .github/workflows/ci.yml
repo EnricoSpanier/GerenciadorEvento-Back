@@ -34,12 +34,16 @@ jobs:
           distribution: temurin
           java-version: 21
 
-      - name: Wait for PostgreSQL
+      - name: Wait for PostgreSQL to be ready
         run: |
           until pg_isready -h localhost -p 5433 -U admin -d meu_banco; do
             echo "Waiting for PostgreSQL..."
             sleep 2
           done
+
+      - name: Initialize Database (run init.sql)
+        run: |
+          PGPASSWORD=senha123 psql -h localhost -p 5433 -U admin -d meu_banco -f ./db/init.sql
 
       - name: Build & Run Tests
         env:
